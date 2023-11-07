@@ -5,7 +5,7 @@ Project 2 for CS50’s Web Programming with Python and JavaScript.
 A design of eBay-like e-commerce auction site that allows users to post Pokémon auction listings, place bids on listings, comment on those listings, and add listings to a “watchlist.”
 
 ## Specifications
-This project fulfills the following requirements:
+This project fulfills the following requirements (still work in progress):
 
 - [x] **Models**: Application has at least three models in addition to the `User` model: one for auction listings, one for bids, and one for comments made on auction listings.
 - [x] **Create Listing**: Users are able to visit a page to create a new Pokémon listing. They are able to specify a title for the listing, a text-based description, and what the starting bid should be. Users are also optionally able to provide a URL for an image for the listing and/or a category.
