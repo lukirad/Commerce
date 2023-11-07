@@ -1,0 +1,45 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Create Listing</h2>
+
+    <form action="{% url 'create' %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="title">Auction Title:</label>
+            <input type="text" name="title" class="form-control" id="title">
+        </div>
+        <div class="mb-3">
+            <label for="description">Descrpition:</label>
+            <textarea id="description" name="description" class="form-control" rows="5"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="image_url">Image URL:</label>
+            <input type="text" name=image_url class="form-control" id="image_url">
+        </div>
+        <div class="mb-3">
+            <label for="price">Price:</label>
+            <input type="number" min="0" name="price" class="form-control" id="price">
+        </div>
+        <!--
+        <p>Do you wish to list this as a public offer?</p>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="is_active" value="True" id="true" checked>
+            <label class="form-check-label" for="true">Yes!</label><br/>
+            <input class="form-check-input" type="radio" name="is_active" value="False" id="false">
+            <label class="form-check-label" for="false">No, I'll do it later.</label>
+        </div>
+        //-->
+        <br>
+        <label>Choose a category:</label>
+        <select name="category">
+            {% for category in categories %}
+                <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+        </select><br><br>
+        <button type="submit" class="btn btn-primary" value="Submit">Create a listing</button>
+    </form>
+
+
+
+{% endblock %}
