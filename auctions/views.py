@@ -1,8 +1,9 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from .models import User, Category, AuctionListing, Comment, Bid
 
@@ -48,6 +49,15 @@ def add_comment(request, id):
 
 def listing_view(request, id):
     listingParameters = AuctionListing.objects.get(pk=id)
+
+    print("Listing Title:", listingParameters.title)
+    print("Image URL:", listingParameters.image_url)
+    print("Listing description:", listingParameters.description)
+    print("Price:", listingParameters.price)
+    print("Is listing active:", listingParameters.is_active)
+    print("Posted by:", listingParameters.user)
+    print("Winner:", listingParameters.winner)
+
     isInWatchlist = request.user in listingParameters.watchlist.all()
     comments = Comment.objects.filter(listing=listingParameters)
     return render(request, "auctions/listing.html", {
@@ -56,9 +66,8 @@ def listing_view(request, id):
         'comments': comments
     })
 
-
+@login_required
 def watchlist_display(request):
-    #AuctionListing.objects.get(user=User)
     currentUser = request.user
     listings = currentUser.watchlist.all()
     return render(request, "auctions/watchlist.html", {
@@ -103,12 +112,10 @@ def index(request):
 def login_view(request):
     if request.method == "POST":
 
-        # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
 
-        # Check if authentication successful
         if user is not None:
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
@@ -130,7 +137,6 @@ def register(request):
         username = request.POST["username"]
         email = request.POST["email"]
 
-        # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
@@ -138,7 +144,6 @@ def register(request):
                 "message": "Passwords must match."
             })
 
-        # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
@@ -180,4 +185,37 @@ def create_listing(request):
         allCategories = Category.objects.all()
         return render(request, "auctions/create.html", {
             "categories": allCategories
+        })
+
+@login_required
+def close_auction(request, id):
+    # Get the listing object
+    listing = AuctionListing.objects.get(pk=id)
+    comments = Comment.objects.filter(listing=listing)
+
+    if request.user == listing.user:
+        if listing.is_active:
+            highest_bid = listing.price
+
+            listing.winner = highest_bid.user
+            listing.is_active = False
+            listing.save()
+
+            return render(request, "auctions/listing.html", {
+                'listing': listing,
+                'update': True,
+                'message': 'Listing successfully updated.',
+                'comments': comments
+            })
+        else:
+            return render(request, 'auctions/listing.html', {
+                'message': 'This listing is already closed.',
+                'listing': listing,
+                'comments': comments
+            })
+    else:
+        return render(request, 'auctions/listing.html', {
+            'message': 'You are not allowed to close this auction.',
+            'listing': listing,
+            'comments': comments
         })

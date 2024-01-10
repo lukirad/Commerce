@@ -25,11 +25,12 @@ class AuctionListing(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField()
     image_url = models.URLField(max_length=2000, blank=True, null=True)
-    price = models.ForeignKey(Bid, on_delete=models.CASCADE, blank=True, null=True, related_name="price")
+    price = models.ForeignKey(Bid, on_delete=models.CASCADE, blank=True, null=True, related_name="bids")
     is_active = models.BooleanField(default=True)
     user = models.ForeignKey(User, related_name="user", on_delete=models.CASCADE)
     category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.CASCADE, related_name="category")
     watchlist = models.ManyToManyField(User, blank=True, null=True, related_name="watchlist")
+    winner = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="new_owner")
     def __str__(self):
         return self.title
 

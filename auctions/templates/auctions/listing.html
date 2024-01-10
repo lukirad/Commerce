@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <div class="container">
+    <div>
         {% if message %}
             {% if update %}
             <div class="alert alert-success" role="alert">
@@ -16,16 +16,34 @@
     </div>
     <div class="row mx-1">
         {% if user.is_authenticated %}
-            {% if isInWatchlist %}
-                <form action="{% url 'watchlist-remove' id=listing.id %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Remove from watchlist</button>
-                </form>
+            {% if listing.is_active %}
+                {% if isInWatchlist %}
+                    <form action="{% url 'watchlist-remove' id=listing.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Remove from watchlist</button>
+                    </form>
+                {% else %}
+                    <form action="{% url 'watchlist-add' listing.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-info">Add to watchlist</button>
+                    </form>
+                {% endif %}
+                {% if listing.user == user %}
+                    <form action="{% url 'close-auction' listing.id %}" method="POST" class="mx-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Close Auction</button>
+                    </form>
+                {% endif %}
             {% else %}
-                <form action="{% url 'watchlist-add' listing.id %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-info">Add to watchlist</button>
-                </form>
+                {% if listing.winner == user %}
+                    <div class="alert alert-success" role="alert">
+                        Congratulations! You have won this auction.
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning" role="alert">
+                        This auction is closed, and you were not the winner.
+                    </div>
+                {% endif %}
             {% endif %}
         {% endif %}
     </div>
@@ -35,7 +53,7 @@
         <p class="h6">{{ listing.description }}</p>
         <h4>Price: ${{ listing.price }}</h4>
     </div>
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and listing.is_active %}
         <form action="{% url 'add-bid' listing.id %}" method="POST">
             {% csrf_token %}
             <input type="number" min="0" name="addBid" placeholder="Add New Bid">
@@ -52,11 +70,13 @@
     <div>
         <h3>Comments:</h3>
         {% if user.is_authenticated %}
-            <form action="{% url 'add-comment' listing.id %}" method="POST">
-                {% csrf_token %}
-                <input type="text" name="newComment" placeholder="Add New Comment"></br>
-                <button type="submit" class="btn btn-primary dark">Post Comment</button>
-            </form>
+            {% if listing.is_active %}
+                <form action="{% url 'add-comment' listing.id %}" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="newComment" placeholder="Add New Comment"></br>
+                    <button type="submit" class="btn btn-primary dark">Post Comment</button>
+                </form>
+            {% endif %}
         {% endif %}
     </div>
     <ol class="list-group list-group-numbered">

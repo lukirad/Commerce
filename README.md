@@ -13,8 +13,8 @@ This project fulfills the following requirements:
 - [x] **Listing Page**: Clicking on a Pokémon listing takes users to a page specific to that listing. On that page, users are able to view all details about the listing, including the current price for the listing.
     - [x] If the user is signed in, the user is able to add the item to their “Watchlist.” If the item is already on the watchlist, the user is able to remove it.
     - [x] If the user is signed in, the user is able to bid on the item. The bid must be at least as large as the starting bid, and must be greater than any other bids that have been placed (if any). If the bid doesn’t meet those criteria, the user is presented with an error.
-    - [ ] If the user is signed in and is the one who created the listing, the user should have the ability to “close” the auction from this page, which makes the highest bidder the winner of the auction and makes the listing no longer active.
-    - [ ] If a user is signed in on a closed listing page, and the user has won that auction, the page should say so.
+    - [x] If the user is signed in and is the one who created the listing, the user should have the ability to “close” the auction from this page, which makes the highest bidder the winner of the auction and makes the listing no longer active.
+    - [x] If a user is signed in on a closed listing page, and the user has won that auction, the page should say so.
     - [x] Users who are signed in are able to add comments to the listing page. The listing page displays all comments that have been made on the listing.
 - [x] **Watchlist**: Users who are signed in are able to visit a Watchlist page, which should display all the listings that a user has added to their watchlist. Clicking on any of those listings takes the user to that listing’s page.
 - [x] **Categories**: Users are able to visit a page that displays a list of all listing categories. Clicking on the name of any category takes the user to a page that displays all the active listings in that category.
